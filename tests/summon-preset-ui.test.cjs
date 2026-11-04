@@ -1,5 +1,6 @@
 const assert=require('node:assert/strict');const {chromium}=require('playwright');
 (async()=>{const b=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox']});try{const p=await b.newPage({viewport:{width:1162,height:800}}),errors=[];p.on('pageerror',e=>errors.push(e.message));await p.goto((process.env.GAME_TEST_URL||'http://127.0.0.1:8000')+'/?gachaTest=1');
+ await p.locator('#gm-toggle').click();await p.locator('[data-action="gm-enter"]').click();await p.locator('[data-page="gacha"]').click();
  await p.waitForFunction(()=>document.querySelector('.sanctum-gem use')?.getBBox().width>0);
  assert.equal((await p.request.get('http://127.0.0.1:8000/assets/summon-kit.svg')).status(),200);
  assert.deepEqual(await p.locator('.gacha-layout tbody tr td:nth-child(2)').allTextContents(),['5%','8%','12%','15%','20%','20%','20%']);

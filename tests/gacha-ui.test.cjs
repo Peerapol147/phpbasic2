@@ -2,6 +2,7 @@ const assert=require('node:assert/strict');const {chromium}=require('playwright'
 (async()=>{const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox']});try{
  const page=await browser.newPage({viewport:{width:1162,height:800}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto((process.env.GAME_TEST_URL||'http://127.0.0.1:8000')+'/?gachaTest=1');
+ await page.locator('#gm-toggle').click();await page.locator('[data-action="gm-enter"]').click();await page.locator('[data-page="gacha"]').click();
  await page.locator('[data-page="heroes"]').click();await page.locator('.hero-art.art-visible').first().waitFor();
  const aura=await page.locator('.knight-card .hero-art').first().evaluate(n=>({class:n.className,color:getComputedStyle(n).getPropertyValue('--aura'),motion:getComputedStyle(n).animationPlayState,gradient:getComputedStyle(n,'::before').backgroundImage}));
  assert.match(aura.class,/aura-element-\d/);assert.equal(aura.motion,'running');assert.match(aura.gradient,/radial-gradient/);
@@ -22,9 +23,9 @@ const assert=require('node:assert/strict');const {chromium}=require('playwright'
  }
  await page.locator('[data-action="summon:10"]').click();await page.locator('.batch-grid').waitFor();assert.equal(await page.locator('.batch-grid [data-order]').count(),10);await page.locator('[data-action="summon-all"]').click();await page.locator('#close-results').click();
  await page.waitForTimeout(800);assert.equal(await page.locator('#results').isVisible(),false);
- await page.locator('[data-action="toggle-gacha-test"]').click();await page.locator('[data-action="summon:1"]').click();await page.locator('[data-action="summon-all"]').click();await page.locator('#close-results').click();
+ await page.locator('#gm-toggle').click();await page.locator('[data-action="gm-exit"]').click();await page.locator('[data-page="gacha"]').click();await page.locator('[data-action="summon:1"]').click();await page.locator('[data-action="summon-all"]').click();await page.locator('#close-results').click();
  const normal=await page.evaluate(()=>JSON.parse(localStorage.getItem('mistbound-v5')));assert.equal(normal.gems,before.gems-100);assert.equal(normal.heroes.length,before.heroes.length+1);
- await page.locator('[data-action="toggle-gacha-test"]').click();await page.setViewportSize({width:390,height:844});await page.emulateMedia({reducedMotion:'reduce'});
+ await page.locator('#gm-toggle').click();await page.locator('[data-action="gm-enter"]').click();await page.locator('[data-page="gacha"]').click();await page.setViewportSize({width:390,height:844});await page.emulateMedia({reducedMotion:'reduce'});
  await page.locator('.gacha-test-panel details summary').click();await page.locator('[data-action="preview-rarity:7"]').click();await page.locator('.summon-reveal.rarity-7').waitFor();assert.equal(await page.locator('.reveal-rays').evaluate(n=>getComputedStyle(n).animationName),'none');assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.deepEqual(errors,[]);
  console.log('PASS: elemental aura/motion, 200 free test pulls without save changes, 7 rarity previews/colors, next/skip/close, normal paid summon, reduced motion and mobile');
 }finally{await browser.close()}})().catch(e=>{console.error(e);process.exitCode=1});

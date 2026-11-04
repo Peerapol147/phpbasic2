@@ -3,6 +3,7 @@ const assert=require('node:assert/strict');const {chromium}=require('playwright'
  const p=await browser.newPage({viewport:{width:1162,height:800}}),errors=[];p.on('pageerror',e=>errors.push(e.message));
  await p.addInitScript(()=>{const seed=sessionStorage.getItem('test-seed');if(seed){localStorage.setItem('mistbound-v5',seed);sessionStorage.removeItem('test-seed');}});
  await p.goto((process.env.GAME_TEST_URL||'http://127.0.0.1:8000')+'/?gachaTest=1');
+ await p.locator('#gm-toggle').click();await p.locator('[data-action="gm-enter"]').click();await p.locator('[data-page="gacha"]').click();
  await p.evaluate(()=>{let calls=0;Math.random=()=>{const slot=calls++%3;return slot===0?(Math.floor((calls-1)/3)%2?.999999:0):0;};});
  await p.locator('[data-action="summon:100"]').click();await p.locator('.batch-grid').waitFor();assert.equal(await p.locator('.summon-tile').count(),100);
  await p.evaluate(()=>{window.firstResult=document.querySelector('.summon-tile');window.repeatControl=document.querySelector('[data-action="summon-repeat"]');});
@@ -20,7 +21,7 @@ const assert=require('node:assert/strict');const {chromium}=require('playwright'
  assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.equal(await p.locator('#results-body').evaluate(n=>n.scrollWidth>n.clientWidth),false);
  await p.locator('[data-order="100"]').scrollIntoViewIfNeeded();assert.equal(await p.locator('[data-order="100"] .hero-art').count(),1);assert.equal(await p.locator('[data-action="summon-repeat"]').isVisible(),true);
  await p.waitForTimeout(250);await p.screenshot({path:'/tmp/mistbound-batch100-mobile.png'});await p.locator('#close-results').click();
- await p.evaluate(async()=>{const {create}=await import('./engine.mjs');const s=create();s.gems=30000;sessionStorage.setItem('test-seed',JSON.stringify(s));});await p.reload();await p.locator('[data-action="toggle-gacha-test"]').click();
+ await p.evaluate(async()=>{const {create}=await import('./engine.mjs');const s=create();s.gems=30000;sessionStorage.setItem('test-seed',JSON.stringify(s));});await p.reload();await p.locator('[data-page="gacha"]').click();
  await p.locator('[data-action="summon:100"]').click();await p.locator('[data-action="summon-all"]').click();
  let paid=await p.evaluate(()=>JSON.parse(localStorage.getItem('mistbound-v5')));assert.equal(paid.gems,20000);assert.equal(paid.heroes.length,108);
  await p.locator('[data-action="summon-repeat"]').click();await p.locator('[data-action="summon-all"]').click();paid=await p.evaluate(()=>JSON.parse(localStorage.getItem('mistbound-v5')));assert.equal(paid.gems,10000);assert.equal(paid.heroes.length,208);assert.equal(await p.locator('[data-action="summon-repeat"]').isDisabled(),true);
