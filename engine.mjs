@@ -5,7 +5,7 @@ export const skills=['คอมโบ: ตีเป้าเดิมแรง�
 export const BALANCE={version:3,maxFloor:30,farmGemBudget:1500,farmGemBase:30,trainingCost:200,timeout:180};
 export function economyDay(now=new Date()){return new Date(now.getTime()+7*3600000).toISOString().slice(0,10);}
 export function ensureEconomy(s,day=economyDay()){if(!s.economy||s.economy.day!==day)s.economy={day,farmGems:0,dropCredit:0};return s.economy;}
-export const rates=[20,20,20,15,12,8,5];
+export const rates=[81.8,15,3,.1,.07,.02,.01];
 export const elements=['น้ำ','ไฟ','ลม','ดิน','ไฟฟ้า','แสง','มืด'];
 export function elementFactor(a,b){if(a===b)return 1;return (a<5&&(a+1)%5===b)||(a===5&&b===6)||(a===6&&b===5)?1.3:1;}
 export const ENEMY_PRESETS=[
@@ -42,7 +42,7 @@ export function hero(id,star,job,element=(id-1)%7){const [str,agi,vit,int]=bases
 export function derive(h){const scale=1+((h.star||1)-1)/9;return {max:Math.round((50+h.vit*6)*scale),atk:Math.round((h.job>=5?8+h.int*2:8+h.str*2)*scale),def:Math.floor(h.vit/3*scale)+(h.gear&&h.job<3?5:0),range:h.job<3?6:35,speed:6+h.agi*.25,interval:Math.max(.65,2-h.agi*.035)};}
 export function bonuses(hs){const close=hs.filter(h=>h.job<3).length,far=hs.length-close,def=hs.filter(h=>[1,2].includes(h.job)).length,sup=hs.filter(h=>h.job>=6).length;return {atk:far>=3?.2:far>=2?.1:0,hp:close>=3?.2:close>=2?.1:0,reduction:def>=2?.1:0,heal:sup>=2?.15:0,all:close&&far&&sup?.05:0,reward:new Set(hs.map(h=>h.job)).size===5?.08:0};}
 export function create(){return {version:5,talents:[0,0,0,0],materials:0,bossTokens:0,weapons:0,wins:0,farmLoop:false,farmSummary:{runs:0,gems:0,gold:0},gems:6000,gold:2500,stones:0,floor:1,cleared:0,nextId:9,heroes:jobs.map((_,j)=>hero(j+1,1,j)),team:[2,3,4,6,8],counts:[0,0,0,0,0,0,0],potions:30,settings:{speed:1,hp:50},auto:false,pulls:0,battle:null,report:null,log:[]};}
-export function summon(s,n,rng=Math.random){if(![1,10,50,100].includes(n)||s.battle||s.gems<n*100||s.heroes.length+n>ROSTER_LIMIT)return [];const hs=Array.from({length:n},()=>{let r=rng()*100,star=7;for(let i=0;i<rates.length;i++){r-=rates[i];if(r<0){star=i+1;break;}}s.counts[star-1]++;return hero(s.nextId++,star,Math.min(7,Math.floor(rng()*8)),Math.min(6,Math.floor(rng()*7)));});s.heroes.push(...hs);s.gems-=n*100;s.pulls+=n;return hs;}
+export function summon(s,n,rng=Math.random){if(![1,10,50,100].includes(n)||s.battle||s.gems<n*100||s.heroes.length+n>ROSTER_LIMIT)return [];const hs=Array.from({length:n},()=>{let r=rng(),star=7,total=0;for(let i=0;i<rates.length;i++){total+=rates[i];if(r<total/100){star=i+1;break;}}s.counts[star-1]++;return hero(s.nextId++,star,Math.min(7,Math.floor(rng()*8)),Math.min(6,Math.floor(rng()*7)));});s.heroes.push(...hs);s.gems-=n*100;s.pulls+=n;return hs;}
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 const nearest=(a,arr)=>arr.filter(t=>t.hp>0).sort((b,c)=>dist(a,b)-dist(a,c))[0];
 function move(a,t,dt,away=false){a.moving=true;a.facing=t.x>=a.x?1:-1;const d=dist(a,t)||1,k=(away?-1:1)*Math.min(a.speed*dt,d)/d;a.x=Math.max(3,Math.min(95,a.x+(t.x-a.x)*k));a.y=Math.max(8,Math.min(88,a.y+(t.y-a.y)*k));}
