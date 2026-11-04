@@ -79,3 +79,11 @@ Summoning opens with a short portal animation, then reveals each actual rolled h
 The gacha page offers **เพชรทดสอบ ∞**. This is an unlimited sandbox draw mode using the same engine roll function and rates, with no gem charge or roster limit because trial heroes are not added to the real save. Normal gem balances, heroes, pull counts and rarity counters remain untouched. Turn it off for normal paid summons that join the team. `?gachaTest=1` opens the test page directly. The test-mode preference is stored separately from game saves. Explicit 1–7-star animation previews are labeled as examples, not random outcomes.
 
 `node tests/gacha-ui.test.cjs` checks 200 test pulls without real-save changes, all seven reveal tiers, aura/motion, controls, normal payment and roster updates, and reduced-motion/mobile behavior. Run with the same local server and Playwright setup as the UI regression suite.
+
+## Compact 100-pull opening
+
+Summon sizes are now 1/10/50/100. Multi-pulls open directly into a compact numbered grid, revealing in original draw order rather than replacing the screen per hero. Each slot is filled once; Show All finishes immediately. The sticky toolbar keeps Repeat Same Amount in place and supports repeated sandbox batches without closing the dialog. Closing cancels the pending reveal timer. Single-character and rarity-preview artwork is smaller.
+
+The real roster capacity is now 300 so normal 100-pulls can fit alongside existing heroes. A normal 100-pull costs 10,000 gems, rejects insufficient funds/capacity without mutation, and is saved before presentation. The sandbox remains free and does not populate the roster. Combat DOM keys now include team/enemy identity to prevent larger hero IDs colliding with enemy IDs.
+
+Validation: 21 engine tests, including ordered 100-pulls, exact payment, capacity rejection and save validation; `tests/batch-gacha-ui.test.cjs` verifies sequential results, stable control positions and slot nodes, repeats/cancellation, scrolling to result #100 on mobile, paid 100-pulls, and combat with hero IDs overlapping enemy numeric IDs. Existing gacha and combat UI regressions remain runnable.

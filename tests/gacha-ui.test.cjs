@@ -20,7 +20,7 @@ const assert=require('node:assert/strict');const {chromium}=require('playwright'
   if(star===7){assert.match(await page.locator('.reveal-rays').evaluate(n=>getComputedStyle(n).backgroundImage),/conic-gradient/);await page.waitForTimeout(750);await page.screenshot({path:'/tmp/mistbound-rainbow-reveal.png'});}
   await page.locator('#close-results').click();
  }
- await page.locator('[data-action="summon:10"]').click();await page.locator('.summon-reveal').waitFor();await page.locator('[data-action="summon-next"]').click();assert.match(await page.locator('.summon-reveal>small').innerText(),/2\/10/);await page.locator('[data-action="summon-all"]').click();await page.locator('#close-results').click();
+ await page.locator('[data-action="summon:10"]').click();await page.locator('.batch-grid').waitFor();assert.equal(await page.locator('.batch-grid [data-order]').count(),10);await page.locator('[data-action="summon-all"]').click();await page.locator('#close-results').click();
  await page.waitForTimeout(800);assert.equal(await page.locator('#results').isVisible(),false);
  await page.locator('[data-action="toggle-gacha-test"]').click();await page.locator('[data-action="summon:1"]').click();await page.locator('[data-action="summon-all"]').click();await page.locator('#close-results').click();
  const normal=await page.evaluate(()=>JSON.parse(localStorage.getItem('mistbound-v5')));assert.equal(normal.gems,before.gems-100);assert.equal(normal.heroes.length,before.heroes.length+1);
