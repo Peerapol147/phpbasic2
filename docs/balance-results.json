@@ -11,37 +11,37 @@
       "floor": 5,
       "teams": 56,
       "wins": 56,
-      "meanSeconds": 9.8
+      "meanSeconds": 9.3
     },
     {
       "floor": 10,
       "teams": 56,
       "wins": 56,
-      "meanSeconds": 15.7
+      "meanSeconds": 14.9
     },
     {
       "floor": 15,
       "teams": 56,
-      "wins": 46,
-      "meanSeconds": 28
+      "wins": 48,
+      "meanSeconds": 25.9
     },
     {
       "floor": 20,
       "teams": 56,
-      "wins": 5,
-      "meanSeconds": 35
+      "wins": 9,
+      "meanSeconds": 33.9
     },
     {
       "floor": 25,
       "teams": 56,
       "wins": 0,
-      "meanSeconds": 28.3
+      "meanSeconds": 28.6
     },
     {
       "floor": 30,
       "teams": 56,
       "wins": 0,
-      "meanSeconds": 22.4
+      "meanSeconds": 22.5
     }
   ],
   "progression": [

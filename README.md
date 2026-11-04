@@ -45,3 +45,19 @@ Economy: farm gems capped at 1500/day using Bangkok date; first-clear rewards ar
 Balance evidence: `node scripts/balance-check.mjs`, results in `docs/balance-results.json`. Tested 56 unique five-class teams at 7 floors, default formation/elements, 1-star level-1, no potions or talents. Wins: floor 1/5/10: 56/56; floor 15: 46/56; floor 20: 5/56; floor 25/30: 0/56. These are deterministic test cases, not population win probabilities. Sample team crosses its floor-20 wall after 5 training purchases per hero (5000 gold). Training/XP farming speed and late-game variety still need player testing; unlimited gold means this is not a competitive economy.
 
 15 engine tests pass. Chromium verified city, filters, detail/training, formation, codex, battle entry, five-member HUD, pause/resume and final report without runtime exceptions. Original CSS characters are placeholders, not the reference game's artwork.
+
+## Combat readability and scaling revision (balance v2)
+
+Combat now displays class-specific slash, arrow, gunshot, spell, heal, potion, shield, guard, summon and revival effects. Spell targeting circles indicate the fixed blast location. Effect age follows simulation time across UI refreshes; pause freezes animations. Reduced-motion mode removes travel animations. Enemy silhouettes now use original CSS creature art instead of chess symbols.
+
+Tank shields scale to 20% of battle max HP. Summons scale to (40 + INT × 2) HP and 40% of the summoner's battle ATK, with existing healing synergy applied. Mage blasts use 115% ATK and resolve at the selected ground location after one second even if the target moves out of range. Movement can therefore avoid a blast. Existing v5 saves remain readable.
+
+Validation: 19 engine tests, including cast completion, shield scaling, minion scaling/limit, and paused effect history. The 56-team balance matrix is regenerated in `docs/balance-results.json`: 56 wins at floors 1/5/10, 48 at 15, 9 at 20, zero at 25/30 for untrained level-1 teams without potions/talents. A separate default-team floor-30 check lost at 15/25 training purchases per hero and won at 40 (40,000 gold total), without potions. These scenarios establish progression feasibility, not comprehensive economy balance. Browser validation covered boss combat, visible effects, pause/resume, 4× speed, final report and mobile overflow. No deployment is implied by these checks.
+
+## Class and rarity artwork
+
+`assets/hero-atlas.png` contains 56 original generated character designs: seven rarity columns (1–7 stars), eight class rows in engine job order (swordsman, knight, tank, archer, gunner, mage, summoner, priest). The transparent atlas is 887×1774 pixels. CSS uses a 4:7 cell aspect ratio and 700%×800% background sizing; keep those aligned if replacing the atlas. Each rarity changes costume/equipment, not just a tint. Characters of the same class and rarity share the same illustration, independent of name, level and element.
+
+The roster, summon results, detail dialog, formation, compact team, battle units and battle HUD select art using both `job` and `star`. The city traveler and class codex default to one star. The Data/Codex page includes a horizontally scrollable 56-design catalog. These are static full-body illustrations with CSS combat movement and effects, not multi-frame animation sheets. Existing saves use their stored class/rarity without migration. The artwork was generated for this project; the reference video informed the fantasy RPG direction, not extracted character assets.
+
+Browser checks confirmed all 56 unique atlas positions, HTTP asset loading, all seven swordsman rarities and matching profile artwork, mobile gallery width, and live combat. Source generation output is retained outside the repository under `/workspace/generated_images/`; the game only needs the checked-in asset path.
