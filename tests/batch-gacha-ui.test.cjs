@@ -4,7 +4,7 @@ const assert=require('node:assert/strict');const {chromium}=require('playwright'
  await p.addInitScript(()=>{const seed=sessionStorage.getItem('test-seed');if(seed){localStorage.setItem('mistbound-v5',seed);sessionStorage.removeItem('test-seed');}});
  await p.goto((process.env.GAME_TEST_URL||'http://127.0.0.1:8000')+'/?gachaTest=1');
  await p.evaluate(()=>{let calls=0;Math.random=()=>{const slot=calls++%3;return slot===0?(Math.floor((calls-1)/3)%2?.999999:0):0;};});
- await p.locator('[data-action="summon:100"]').click();assert.equal(await p.locator('.summon-tile').count(),100);
+ await p.locator('[data-action="summon:100"]').click();await p.locator('.batch-grid').waitFor();assert.equal(await p.locator('.summon-tile').count(),100);
  await p.evaluate(()=>{window.firstResult=document.querySelector('.summon-tile');window.repeatControl=document.querySelector('[data-action="summon-repeat"]');});
  await p.waitForTimeout(250);const count=await p.locator('.summon-tile:not(.pending)').count();assert.ok(count>1&&count<100);
  const pos=await p.locator('[data-action="summon-repeat"]').boundingBox();await p.locator('[data-action="summon-all"]').click();

@@ -87,3 +87,11 @@ Summon sizes are now 1/10/50/100. Multi-pulls open directly into a compact numbe
 The real roster capacity is now 300 so normal 100-pulls can fit alongside existing heroes. A normal 100-pull costs 10,000 gems, rejects insufficient funds/capacity without mutation, and is saved before presentation. The sandbox remains free and does not populate the roster. Combat DOM keys now include team/enemy identity to prevent larger hero IDs colliding with enemy IDs.
 
 Validation: 21 engine tests, including ordered 100-pulls, exact payment, capacity rejection and save validation; `tests/batch-gacha-ui.test.cjs` verifies sequential results, stable control positions and slot nodes, repeats/cancellation, scrolling to result #100 on mobile, paid 100-pulls, and combat with hero IDs overlapping enemy numeric IDs. Existing gacha and combat UI regressions remain runnable.
+
+## Highest-rarity summon intro
+
+Before revealing a batch, the opening effect uses `Math.max` across the already-rolled heroes. It never rolls again or changes their order. Colored concentric seals, rays, a charging crystal, a beam, outward sparks and a discharge build toward the reveal; 5+ adds a halo/cross and 7 uses a rainbow ring. Particle counts are bounded at 38 (24 visible on narrow screens). CSS animates transforms/opacity without a JavaScript particle loop or backdrop blur.
+
+Tier duration ranges from 0.85 to 2.6 seconds. Skip Effect proceeds into the ordered reveal; Show All bypasses both stages. Closing cancels the transition and each repeat computes its own maximum. Reduced-motion users receive a short static color cue before the results. The existing compact 100-result grid and repeat controls are preserved.
+
+`node tests/summon-omen-ui.test.cjs` checks all seven tiers with the highest rarity specifically at draw #100, correct colors, absence of character art during the intro, particle bounds, automatic and skipped transitions, repeated-batch recalculation, close cancellation, mobile layout and reduced motion.
