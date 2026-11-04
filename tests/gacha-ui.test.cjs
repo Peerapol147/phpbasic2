@@ -17,7 +17,7 @@ const assert=require('node:assert/strict');const {chromium}=require('playwright'
   await page.locator(`[data-action="preview-rarity:${star}"]`).click();await page.locator(`.summon-reveal.rarity-${star}`).waitFor();
   assert.equal(await page.locator('.reveal-stage .hero-art').getAttribute('data-art'),`0-${star}`);
   if(colors[star])assert.equal(await page.locator('.summon-reveal').evaluate(n=>getComputedStyle(n).getPropertyValue('--rarity').trim()),colors[star]);
-  if(star===7){assert.match(await page.locator('.reveal-rays').evaluate(n=>getComputedStyle(n).backgroundImage),/conic-gradient/);await page.waitForTimeout(750);await page.screenshot({path:'/tmp/mistbound-rainbow-reveal.png'});}
+  if(star===7){assert.equal(await page.locator('.reveal-rays use[href$="#prism-ring"]').count(),1);await page.waitForTimeout(750);await page.screenshot({path:'/tmp/mistbound-rainbow-reveal.png'});}
   await page.locator('#close-results').click();
  }
  await page.locator('[data-action="summon:10"]').click();await page.locator('.batch-grid').waitFor();assert.equal(await page.locator('.batch-grid [data-order]').count(),10);await page.locator('[data-action="summon-all"]').click();await page.locator('#close-results').click();

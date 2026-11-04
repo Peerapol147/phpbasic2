@@ -1,0 +1,14 @@
+const assert=require('node:assert/strict');const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox']});try{const p=await b.newPage({viewport:{width:1162,height:800}}),errors=[];p.on('pageerror',e=>errors.push(e.message));await p.goto((process.env.GAME_TEST_URL||'http://127.0.0.1:8000')+'/?gachaTest=1');
+ await p.waitForFunction(()=>document.querySelector('.sanctum-gem use')?.getBBox().width>0);
+ assert.equal((await p.request.get('http://127.0.0.1:8000/assets/summon-kit.svg')).status(),200);
+ assert.deepEqual(await p.locator('.gacha-layout tbody tr td:nth-child(2)').allTextContents(),['5%','8%','12%','15%','20%','20%','20%']);
+ assert.doesNotMatch(await p.locator('body').innerText(),/\bAI\b|ต้นแบบ|เรททดลอง|pity/);
+ assert.ok(await p.locator('#wallet .gem-icon use').evaluate(n=>n.getBBox().width)>0);
+ await p.screenshot({path:'/tmp/mistbound-preset-sanctum.png'});
+ await p.evaluate(()=>{Math.random=()=>.99;});await p.locator('[data-action="summon:100"]').click();await p.locator('.omen.rarity-7').waitFor();await p.waitForFunction(()=>document.querySelector('.omen-crystal use')?.getBBox().width>0);
+ assert.equal(await p.locator('.omen-rays use[href$="#prism-ring"]').count(),1);assert.equal(await p.locator('.omen-rays').evaluate(n=>getComputedStyle(n).backgroundImage),'none');
+ await p.waitForTimeout(700);await p.screenshot({path:'/tmp/mistbound-preset-opening.png'});await p.locator('[data-action="summon-all"]').click();await p.locator('#close-results').click();
+ await p.setViewportSize({width:390,height:844});assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);await p.screenshot({path:'/tmp/mistbound-preset-mobile.png'});assert.deepEqual(errors,[]);
+ console.log('PASS: vector symbols load/render, matching rate table, concise copy, shared diamond icon, segmented rainbow seal, desktop and mobile');
+}finally{await b.close()}})().catch(e=>{console.error(e);process.exitCode=1});

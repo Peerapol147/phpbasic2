@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict');const {chromium}=require('playwright');
 (async()=>{const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox']});try{
  const p=await browser.newPage({viewport:{width:1162,height:800}}),errors=[];p.on('pageerror',e=>errors.push(e.message));await p.goto((process.env.GAME_TEST_URL||'http://127.0.0.1:8000')+'/?gachaTest=1');
- const rolls=[0,0,.85,.98,.9985,.9995,.9998,.99995],colors=['','#b5c0d2','#8cdb9b','#6ab8ff','#be86f4','#f3ca65','#ff5c6c','#e5bcff'];
+ const rolls=await p.evaluate(async()=>{const {rates}=await import('./engine.mjs');let total=0;return [0,...rates.map(r=>{const midpoint=(total+r/2)/100;total+=r;return midpoint;})];}),colors=['','#b5c0d2','#8cdb9b','#6ab8ff','#be86f4','#f3ca65','#ff5c6c','#e5bcff'];
  for(let highest=1;highest<=7;highest++){
   await p.evaluate(roll=>{let calls=0;Math.random=()=>{const call=calls++,slot=call%3,index=Math.floor(call/3);return slot===0&&index===99?roll:0;};},rolls[highest]);
   await p.locator('[data-action="summon:100"]').click();const omen=p.locator('.omen');await omen.waitFor();

@@ -95,3 +95,11 @@ Before revealing a batch, the opening effect uses `Math.max` across the already-
 Tier duration ranges from 0.85 to 2.6 seconds. Skip Effect proceeds into the ordered reveal; Show All bypasses both stages. Closing cancels the transition and each repeat computes its own maximum. Reduced-motion users receive a short static color cue before the results. The existing compact 100-result grid and repeat controls are preserved.
 
 `node tests/summon-omen-ui.test.cjs` checks all seven tiers with the highest rarity specifically at draw #100, correct colors, absence of character art during the intro, particle bounds, automatic and skipped transitions, repeated-batch recalculation, close cancellation, mobile layout and reduced motion.
+
+## Accessible rates and vector summon interface
+
+Current rates, shared by normal and free summoning: 1★ 20%, 2★ 20%, 3★ 20%, 4★ 15%, 5★ 12%, 6★ 8%, 7★ 5%. These replace the earlier harsh rates. Draw price, capacity, original draw order and the highest-rarity intro selection are unchanged. Existing heroes and saves are retained.
+
+`assets/summon-kit.svg` is a small reusable vector symbol set with a faceted gemstone, engraved seal, seven colored ring segments and a spark shape. The same diamond geometry appears in the wallet, buttons, sanctum and opening animation. Fixed linework replaces emoji diamonds and large conic-gradient rainbow glows. The UI now uses concise action labels and removes prototype/AI commentary, outdated odds and filler copy. Free summoning remains explicitly labeled as not adding heroes to the team.
+
+Validation: 22 engine tests including every new cumulative rarity boundary; updated highest-tier and rarity-preview browser checks; `tests/summon-preset-ui.test.cjs` verifies that external SVG symbols actually render, the displayed odds match the engine, removed copy is absent, and desktop/mobile layouts fit.
