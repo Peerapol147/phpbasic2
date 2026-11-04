@@ -1,4 +1,4 @@
-import {jobs,rates,create,summon,start,tick,train,equip,bonuses,derive,skills,encounters,elements,floorInfo,teamPower,validateSave,beginFarm,talentNames,talentDescriptions,talentCost,unlockTalent,BALANCE,ensureEconomy} from './engine.mjs';
+import {jobs,rates,create,summon,start,tick,train,equip,bonuses,derive,skills,encounters,elements,floorInfo,teamPower,validateSave,beginFarm,talentNames,talentDescriptions,talentCost,unlockTalent,BALANCE,ensureEconomy} from './engine.mjs?v=art56-v1';
 let s=create(),page='city',selectedFloor=1,speed=1,heroTab='roster',detailId=null;const filters={query:'',job:'',element:'',star:'',team:'',sort:'power'};const $=id=>document.getElementById(id),esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const valid=validateSave;
 try{const x=JSON.parse(localStorage.getItem('mistbound-v5'));if(valid(x)){s=x;s.battle=null;s.auto=false;s.farmLoop=false;}}catch{}
