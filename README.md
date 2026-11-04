@@ -69,3 +69,13 @@ The summon dialog's old `.portrait span` badge rule reset the art background to 
 During combat, unit/HUD nodes are retained; updates change position, HP and status in place. Effects are keyed by their simulation event IDs and expire individually. Movement uses CSS translate rather than layout coordinates. Full rendering remains for navigation and encounter transitions. Background simulation stops while the document is hidden. Saves exclude transient battle state, are throttled to once per five seconds during combat, and flush on actions, battle outcomes, page hide and tab hide. Expensive backdrop blurs are removed; offscreen catalog rows and summon cards use content visibility.
 
 The same 2.2-second Chromium floor-20 probe measured 1,378 removed DOM elements and 11 storage writes before, versus 1 removed element and zero writes after; fighter nodes remain attached. These are operation counts, not a device FPS guarantee. Run `node tests/ui.test.cjs` with the local server, Playwright and system Chromium for the summon-art, DOM-retention, autosave, pause, speed, mobile and battle-report regression checks.
+
+## Elemental aura and gacha reveal
+
+Actual heroes pass their element into the shared artwork renderer. Subtle elemental glow/rings accompany lightweight sway or hover motion; an IntersectionObserver pauses offscreen art and document visibility pauses hidden-tab motion. Combat still retains unit nodes, and reduced-motion preferences disable animations.
+
+Summoning opens with a short portal animation, then reveals each actual rolled hero. Next, Skip/Show All and Close are available; the results are decided and saved before the animation. Reveal colors: 1 gray, 2 green, 3 blue, 4 purple, 5 gold, 6 red, 7 rainbow. Closing cancels pending reveal timers.
+
+The gacha page offers **เพชรทดสอบ ∞**. This is an unlimited sandbox draw mode using the same engine roll function and rates, with no gem charge or roster limit because trial heroes are not added to the real save. Normal gem balances, heroes, pull counts and rarity counters remain untouched. Turn it off for normal paid summons that join the team. `?gachaTest=1` opens the test page directly. The test-mode preference is stored separately from game saves. Explicit 1–7-star animation previews are labeled as examples, not random outcomes.
+
+`node tests/gacha-ui.test.cjs` checks 200 test pulls without real-save changes, all seven reveal tiers, aura/motion, controls, normal payment and roster updates, and reduced-motion/mobile behavior. Run with the same local server and Playwright setup as the UI regression suite.
