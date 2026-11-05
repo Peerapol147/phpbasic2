@@ -4,7 +4,7 @@ const {chromium}=require('playwright');
 const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.accept());
 await page.goto('http://127.0.0.1:8000/');await page.locator('[data-page=heroes]').click();assert.equal(await page.locator('.roster-item').count(),8);
 await page.locator('[data-action="lock:1"]').click();
-await page.locator('[data-salvage="5"]').check();await page.locator('[data-salvage="7"]').check();assert.equal(await page.locator('[data-salvage]:checked').count(),2);
+await page.locator('[data-action=select-all]').click();await page.locator('[data-action=clear-selection]').click();await page.locator('[data-salvage="5"]').check();await page.locator('[data-salvage="7"]').check();assert.equal(await page.locator('[data-salvage]:checked').count(),2);
 await page.locator('[data-action="dismantle-review"]').click();assert.equal(await page.locator('.salvage-review li').count(),2);await page.locator('[data-action="close-detail"]').click();assert.equal(await page.locator('.roster-item').count(),8);
 await page.locator('[data-action="dismantle-review"]').click();await page.locator('[data-action="dismantle-confirm"]').click();assert.equal(await page.locator('.roster-item').count(),6);let save=await page.evaluate(()=>JSON.parse(localStorage.getItem('mistbound-v5')));assert.equal(save.stones,2);assert.equal(save.materials,4);assert.equal(save.heroes.find(h=>h.id===1).locked,true);assert.deepEqual(save.team,[2,3,4,6,8]);
 await page.reload();await page.locator('[data-page=heroes]').click();assert.equal(await page.locator('.roster-item').count(),6);await page.screenshot({path:'/tmp/roster-desktop.png',fullPage:true});

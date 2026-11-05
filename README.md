@@ -55,3 +55,11 @@ Heroes → ย่อยตัวละคร supports batch selection, protected
 ### Inline selection (inline-v14)
 
 Selection now lives inside the hero filter panel; there are no separate bulk/dismantling tabs. Check individual cards or select all matching the current filters, then lock, unlock or review dismantling from the same screen. Hidden selections are counted. Dismantling previews skip protected heroes and snapshot only the eligible IDs for confirmation. Changing filters retains the selection. `node tests/bulk-ui.test.cjs` and `node tests/roster-ui.test.cjs` cover the inline workflow and mobile layout.
+
+## Selection and motion (motion-v15)
+
+The hero filter panel initially shows only “เลือกทั้งหมด”. Press it to reveal selected card checkboxes and bulk commands; uncheck individual heroes or click their cards to exclude them. Cancel exits selection mode.
+
+Combat presentation now interpolates between 50 ms simulation steps on every animation frame. Walk and attack poses use simulation time, with one intact character image instead of separately moving cropped feet. Numeric effects also follow the simulation clock. Facing follows the retained enemy target rather than temporary approach positions. Simulation damage/rewards are unchanged. This improves presentation of the existing atlas; it is not a new frame-by-frame sprite set.
+
+Checks: 83 unit/regression cases; browser coverage for selection entry/exclusion/cancel, dismantling, 90 sampled movement frames, pause, 4× speed, reduced motion, and VFX. Run `node tests/motion.test.mjs` and `node tests/motion-ui.test.cjs` with the same local browser prerequisites as the other UI tests.

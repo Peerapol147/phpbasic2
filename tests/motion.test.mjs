@@ -1,0 +1,6 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';
+import {snapshotMotion,motionFrame,poseFor} from '../motion.mjs';
+import {create,start,tick} from '../engine.mjs';
+test('interpolation stays between ticks, never modifies engine or presents future events',()=>{const s=create();start(s);const b=s.battle,prev=snapshotMotion(b);b.units[0].x+=2;b.time=.05;b.events=[{time:.04}];const before=JSON.stringify(b),f=motionFrame(b,prev,.5);assert.equal(f.units[0].x,b.units[0].x-1);assert.equal(f.time,.025);assert.equal(f.events.length,0);assert.equal(JSON.stringify(b),before);assert.equal(motionFrame(b,prev,2).units[0].x,b.units[0].x);b.wave++;assert.equal(motionFrame(b,prev,.5),b);});
+test('pose is deterministic and respects incapacitation/reduced motion',()=>{const u={id:2,moving:true,hp:10,speed:8};assert.deepEqual(poseFor(u,2),poseFor(u,2));assert.deepEqual(poseFor(u,2,true),{lift:0,lean:0,reach:0});assert.deepEqual(poseFor({...u,stun:1},2),{lift:0,lean:0,reach:0});assert.ok(Math.abs(poseFor(u,2).lift)<=.7);});
+test('presentation has no effect on deterministic battle outcome',()=>{const a=create(),b=structuredClone(a);start(a);start(b);for(let i=0;i<6000&&a.battle;i++){const prev=snapshotMotion(a.battle);tick(a);if(a.battle)for(const alpha of [.1,.5,.9])motionFrame(a.battle,prev,alpha);tick(b);}assert.deepEqual(a,b);});

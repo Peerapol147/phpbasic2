@@ -55,7 +55,7 @@ function move(a,t,dt,units,away=false){
  const length=Math.hypot(dx,dy)||1,step=Math.min(a.speed*(1-(a.slow||0))*dt,d);
  const x=clamp(a.x+dx/length*step,7,93),y=clamp(a.y+dy/length*step,9,85);
  a.moving=Math.hypot(x-a.x,y-a.y)>.015;a.x=x;a.y=y;
- if(Math.abs(t.x-a.x)>1.5)a.facing=t.x>a.x?1:-1;
+ // Facing follows the retained combat target, not its temporary approach slot.
 }
 function separate(units,dt){for(let i=0;i<units.length;i++)for(let j=i+1;j<units.length;j++){const a=units[i],b=units[j];if(!alive(a)||!alive(b))continue;const d=dist(a,b);if(d>=3.2)continue;const angle=d>.01?Math.atan2(b.y-a.y,b.x-a.x):(a.id+b.id)*1.7,push=Math.min(dt*1.8,(3.2-d)*.5);a.x=clamp(a.x-Math.cos(angle)*push,7,93);a.y=clamp(a.y-Math.sin(angle)*push,9,85);b.x=clamp(b.x+Math.cos(angle)*push,7,93);b.y=clamp(b.y+Math.sin(angle)*push,9,85);}}
 export function start(s,farm=false,selected=null){
