@@ -44,3 +44,10 @@ Open `vfx-preview.html` (also linked from the in-game library) to preview all si
 
 - `node tests/vfx.test.mjs` — six mapping, geometry, timing and combat integration cases.
 - `node tests/vfx-ui.test.cjs` — requires a local server on port 8000, Playwright and Chromium; checks preview controls/mobile layout, combat pause/speed, reduced motion and runtime errors.
+
+## Roster management (roster-v12)
+
+Heroes → ย่อยตัวละคร supports batch selection, protected heroes, a review dialog and exact resource payouts. Lock important heroes from their card/profile. Training and upgrades have direct actions; inventory shows all seven resources with usage links. Existing v5 saves remain compatible. [Audit, yields and remaining feature gaps](docs/roster-v12-audit.md).
+
+- `node tests/roster.test.mjs` — atomic dismantling, protections, rewards and legacy save compatibility.
+- `node tests/roster-ui.test.cjs` — preview/cancel/confirm, reload, locks, roster actions and mobile layouts (same browser/server requirements as VFX tests).
