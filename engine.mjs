@@ -82,7 +82,7 @@ export function tick(s,dt=.05){
   if(enemy){amount=Math.max(1,Math.round(amount*(1-b.bonus.reduction)));const knight=live().find(h=>h.job===1&&h!==t&&h.skillCd<=0&&dist(h,t)<16);if(knight){const guard=Math.min(knight.hp,Math.floor(amount*.35));knight.hp-=guard;knight.taken+=guard;amount-=guard;knight.skillCd=4;knight.uses++;if(!alive(knight))knight.downs++;effect('guard',knight,t,guard,.65,{preset:'aegis'});}}
   const absorbed=Math.min(t.shield||0,amount);t.shield=Math.max(0,(t.shield||0)-absorbed);amount-=absorbed;if(absorbed>0)effect('shield-hit',a,t,0,.45,{preset:'aegis'});
   const actual=Math.min(t.hp,amount);t.hp-=actual;t.taken=(t.taken||0)+actual;a.dealt=(a.dealt||0)+actual;t.hurtUntil=b.time+.15;
-  effect('damage',a,t,actual,.55,{critical});effect('impact',a,t,0,.5,{preset:presetFor(a,skill),critical});
+  effect('damage',a,t,actual,.55,{critical});effect('impact',a,t,0,.5,{preset:presetFor(a,skill),critical,skillId:skill.id||'',rank:a.star||1});
   if(a.owner){const owner=b.units.find(u=>u.id===a.owner);if(owner)owner.dealt+=actual;}
   if(alive(t)){if(skill.stun)t.stun=Math.max(t.stun||0,skill.stun);if(skill.slow){t.slow=skill.slow;t.slowUntil=b.time+3;}}
   if(alive(a)&&!enemy){heal(a,a,actual*((a.passive?.leech||0)+(skill.leech||0)));}
@@ -101,7 +101,7 @@ export function tick(s,dt=.05){
  }
  function prepare(a,target,skill){
   const power=a.atk*skill.power,duration=skill.kind==='magic'?.7:skill.kind==='heal'||skill.kind==='revive'?.45:.22;
-  a.action={target,skill,power,remaining:duration,center:{x:target.x,y:target.y}};a.actionName=skill.name||'';a.cast=skill.kind==='magic'?a.action.center:null;a.actionUntil=b.time+duration;
+  a.motion={start:b.time,duration,kind:skill.kind};a.action={target,skill,power,remaining:duration,center:{x:target.x,y:target.y}};a.actionName=skill.name||'';a.cast=skill.kind==='magic'?a.action.center:null;a.actionUntil=b.time+duration;
   effect('charge',a,target,0,duration,{preset:presetFor(a,skill)});
   if(skill.radius&&a.cast)effect('cast',a,target,0,duration,{radius:skill.radius});
   if(skill.id){a.skillTimers[skill.id]=skill.cooldown;a.uses++;log(`${a.name} · ${skill.name}`);}a.cd=Math.max(a.interval,duration+.15);
@@ -118,7 +118,7 @@ export function tick(s,dt=.05){
    if(a.passive.guard&&a.hp/a.max<.35&&a.guardCd<=0){a.shield=Math.max(a.shield,Math.round(a.max*a.passive.guard));a.guardCd=15;effect('shield',a,a,0,.8,{preset:'aegis'});}
    if(s.settings.hp>0&&a.hp/a.max*100<=s.settings.hp&&s.potions>0&&a.potionCd<=0){heal(a,a,a.max*.4*(1+b.talent.heal));s.potions--;a.potionCd=10;}
   }
-  if(a.stun>0){a.action=null;a.cast=null;continue;}
+  if(a.stun>0){a.action=null;a.cast=null;a.motion=null;continue;}
   if(a.action){const act=a.action;act.remaining-=dt;if(act.remaining>1e-8)continue;a.action=null;a.cast=null;
    const ranged=['shot','magic'].includes(act.skill.kind);
    if(ranged){effect('launch',a,act.skill.radius?act.center:act.target,0,.2,{preset:presetFor(a,act.skill)});const travel=clamp(dist(a,act.target)/80,.12,.65),event=effect('projectile',a,act.skill.radius?act.center:act.target,0,travel,{projectile:act.skill.kind,preset:presetFor(a,act.skill),sourceId:a.id,targetId:act.skill.radius?null:act.target.id});b.shots.push({source:a,target:act.target,center:act.center,skill:act.skill,power:act.power,remaining:travel,event});}
@@ -161,7 +161,7 @@ export function tick(s,dt=.05){
  let outcome;
  if(!live().some(h=>!h.owner)||b.time>=BALANCE.timeout)outcome='loss';
  else if(b.enemies.every(e=>!alive(e))&&b.shots.length===0){
-  if(b.wave<b.totalWaves){if(!b.intermission){b.intermission=1.2;log(`ผ่านคลื่น ${b.wave} · ศัตรูกำลังมา`);}else {b.intermission=Math.max(.001,b.intermission-dt);if(b.intermission<=.001){b.wave++;b.enemies=spawn(b.floor,b.wave);b.intermission=0;for(const h of b.units){h.action=null;h.cast=null;h.targetId=null;}log(`คลื่น ${b.wave}/${b.totalWaves}`);}}return;}
+  if(b.wave<b.totalWaves){if(!b.intermission){b.intermission=1.2;log(`ผ่านคลื่น ${b.wave} · ศัตรูกำลังมา`);}else {b.intermission=Math.max(.001,b.intermission-dt);if(b.intermission<=.001){b.wave++;b.enemies=spawn(b.floor,b.wave);b.intermission=0;for(const h of b.units){h.action=null;h.cast=null;h.motion=null;h.targetId=null;}log(`คลื่น ${b.wave}/${b.totalWaves}`);}}return;}
   outcome='win';
  }
  if(!outcome)return;

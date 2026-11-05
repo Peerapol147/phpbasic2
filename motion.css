@@ -3,3 +3,5 @@
 @media(prefers-reduced-motion:reduce){.combat-stage .battle-sprite,.combat-stage .fighter>.enemy-art{translate:0 0;rotate:0deg}}
 
 .combat-stage .skill-effect{animation-play-state:paused!important}
+/* Preserve shared class poses and bow draw with restrained, continuous anatomy. */
+.combat-stage .battle-sprite{transform:translateX(calc(var(--pose-lean,0)*.35px)) rotate(calc(var(--pose-body,0)*.18deg))}.combat-stage .sprite-upper{transform:none!important}.combat-stage .off-arm{display:none}.combat-stage .fighter.fallen .battle-sprite{transform:none}

@@ -18,7 +18,7 @@ export function presetMarkup(e){
  const numeric=['heal','revive','guard'].includes(e.type)&&e.value>0;
  const particles=Array.from({length:e.preset==='bullet'?7:9},(_,i)=>{const angle=(i*137.5+e.id*13)*Math.PI/180,r=17+i%3*11;return `<i class="fx-spark" style="--dx:${Math.cos(angle)*r}px;--dy:${Math.sin(angle)*r}px;--turn:${i*41}deg"></i>`;}).join('');
  const shape=svg(glyphs[e.preset]);
- return `<span data-effect="${e.id}" class="vfx-preset preset-${e.preset} phase-${phase} ${e.type==='shield-hit'?'shield-hit':''} ${e.radius?'area-effect':''}" aria-hidden="true"><span class="vfx-ground">${ring}</span><span class="vfx-orient"><span class="vfx-bloom">${shape}</span><span class="vfx-form">${shape}</span><span class="vfx-impact">${burst}</span><span class="vfx-particles">${particles}</span></span>${numeric?`<b class="vfx-value">+${Math.round(e.value)}</b>`:''}</span>`;
+ return `<span data-effect="${e.id}" class="vfx-preset preset-${e.preset} phase-${phase} ${e.type==='shield-hit'?'shield-hit':''} ${e.radius?'area-effect':''} ${e.critical?'critical-impact':''} ${e.skillId?'active-impact':''}" aria-hidden="true"><span class="vfx-ground">${ring}</span><span class="vfx-orient"><span class="vfx-bloom">${shape}</span><span class="vfx-form">${shape}</span>${e.preset==='slash'&&e.skillId?`<span class="vfx-echo">${shape}</span>`:''}<span class="vfx-impact">${burst}</span><span class="vfx-particles">${particles}</span></span>${numeric?`<b class="vfx-value">+${Math.round(e.value)}</b>`:''}</span>`;
 }
 // Uses the battle clock, never CSS elapsed time. All stages pause/scale together.
 export function presetGeometry(e,b,width=900,height=800,reduced=false){
