@@ -142,3 +142,18 @@ body[data-page=gacha] .page-heading h1{font-size:25px;margin:5px 0 12px}body[dat
 .is-paused .enemy-art,.motion-paused .enemy-art{animation-play-state:paused!important}@media(prefers-reduced-motion:reduce){.enemy-art,.fighter.moving>.enemy-art,.cinematic .fighter.moving>.hero-art{animation:none!important}}
 .leader-hud{display:flex;align-items:center;gap:14px;background:#17212b;border-bottom:1px solid #8b7659;padding:8px 18px;font-size:12px}.leader-hud progress{flex:1;max-width:340px;accent-color:#d7a477}.leader-hud small{color:#d2b88c}.fighter.foe:not(.winding)>small{visibility:hidden}.fighter.foe:hover>small{visibility:visible}.fighter.fallen{pointer-events:none;opacity:.12}.skill-effect.fx-heal,.skill-effect.fx-potion,.skill-effect.fx-revive{color:#9dd7ae}.skill-effect> b{position:absolute;inset:20%;text-shadow:0 2px 3px #102026}.arena-gate{opacity:.3}
 @media(max-width:700px){.leader-hud{flex-wrap:wrap;gap:5px;padding:7px;font-size:10px}.leader-hud small{display:none}.leader-hud progress{min-width:80px}}
+
+/* Stable simulation targets + interpolation between the 200ms combat ticks. */
+.combat-stage .fighter{transition:translate .2s linear;will-change:translate}
+.cinematic .fighter>.hero-art,.fighter>.enemy-art{animation:none;transform-origin:50% 90%}
+.cinematic .fighter.moving>.hero-art,.fighter.moving>.enemy-art{animation:grounded-step .32s linear infinite}
+@keyframes grounded-step{0%,100%{translate:0 0}50%{translate:0 -1px}}
+.combat-stage .fighter:not(.shielded):before{content:'';position:absolute;left:18%;right:18%;top:68%;height:8px;border-radius:50%;background:#0005;filter:blur(2px);z-index:-1}
+.skill-entry{padding:10px;border-left:2px solid #dbbc76;background:#101b2b;line-height:1.8}
+.is-paused .fighter,.motion-paused .fighter{transition:none}
+@media(prefers-reduced-motion:reduce){.combat-stage .fighter{transition:none}.cinematic .fighter.moving>.hero-art,.fighter.moving>.enemy-art{animation:none}}
+
+/* Compact projectiles travel from the actual attacker to the impact position. */
+.skill-effect.fx-arrow,.skill-effect.fx-shot,.skill-effect.fx-bolt{display:block;width:30px;height:16px;animation-name:combat-projectile;animation-duration:.18s}
+.skill-effect.fx-arrow>svg,.skill-effect.fx-shot>svg,.skill-effect.fx-bolt>svg{rotate:var(--flight-angle,0deg)}
+.skill-effect.fx-cast{animation:none;transform:translate(-50%,-50%);opacity:.5;z-index:1}
