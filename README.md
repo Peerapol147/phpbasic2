@@ -73,3 +73,11 @@ The hero filter panel initially shows only “เลือกทั้งหม�
 Combat presentation now interpolates between 50 ms simulation steps on every animation frame. Walk and attack poses use simulation time, with one intact character image instead of separately moving cropped feet. Numeric effects also follow the simulation clock. Facing follows the retained enemy target rather than temporary approach positions. Simulation damage/rewards are unchanged. This improves presentation of the existing atlas; it is not a new frame-by-frame sprite set.
 
 Checks: 87 unit/regression cases; browser coverage for selection entry/exclusion/cancel, dismantling, 90 sampled movement frames, pause, 4× speed, reduced motion, and VFX. Run `node tests/motion.test.mjs` and `node tests/motion-ui.test.cjs` with the same local browser prerequisites as the other UI tests.
+
+## Frame-by-frame walking study (walk-v17)
+
+`walk-preview.html` presents a newly generated transparent swordsman walk sheet with eight complete poses, plus individual frame inspection, 6/8/10/12 FPS playback, optional previous-frame overlay, horizontal mirroring and traversal preview. Open it directly or from the in-game library. The original PNG is preserved in `assets/animation/swordsman-walk.png`; `walk-frames.mjs` records exact source rectangles and ground anchors (the generated canvas has odd dimensions, so do not assume evenly divisible integer cells). No limb rotation or image warping is used in this preview.
+
+This is the first visual review asset, for the starter swordsman and one side-view direction. Mirroring is a preview convenience, not an independently drawn left-facing set. It is not yet substituted for battle sprites: idle, attacks, hurt, death and other classes/ranks still need their own consistent frames. Preview controls do not read or write game saves.
+
+`node tests/walk-preview-ui.test.cjs` checks eight distinct rendered frames, loop and step wrapping, pause, controls, mobile layout, reduced-motion start and save isolation (local :8000 server, Playwright and Chromium required).
