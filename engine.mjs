@@ -1,3 +1,4 @@
+import {presetFor} from './vfx-types.mjs?v=fx-v11';
 import {assignSkills,heroSkills,heroPassives,passiveStats,abilityText} from './abilities.mjs?v=clip-v10';
 export {ABILITIES,PASSIVES,classPassives,heroSkills,heroPassives,abilityText} from './abilities.mjs?v=clip-v10';
 export const ROSTER_LIMIT=300;
@@ -69,19 +70,19 @@ export function tick(s,dt=.05){
  dt=Math.min(.2,dt);b.time+=dt;b.turn++;
  const log=t=>{s.log.unshift(`${b.time.toFixed(1)}s · ${t}`);s.log=s.log.slice(0,100);};
  const live=()=>b.units.filter(alive),all=()=>[...b.units,...b.enemies];
- const effect=(type,a,t,value=0,duration=.5,extra={})=>{const e={id:++b.effectId,type,x:t.x,y:t.y,fromX:a.x,fromY:a.y,element:a.element,job:a.job,value,time:b.time,duration,...extra};b.events.push(e);return e;};
+ const effect=(type,a,t,value=0,duration=.5,extra={})=>{const e={id:++b.effectId,type,x:t.x,y:t.y,fromX:a.x,fromY:a.y,element:a.element,job:a.job,sourceId:a.id,targetId:t.id,value,time:b.time,duration,...extra};b.events.push(e);return e;};
  b.events=b.events.filter(e=>b.time-e.time<e.duration);
- const heal=(a,t,power)=>{if(!alive(t))return;const n=Math.min(t.max-t.hp,Math.round(power));if(n<=0)return;t.hp+=n;a.healed=(a.healed||0)+n;effect('heal',a,t,n);};
+ const heal=(a,t,power)=>{if(!alive(t))return;const n=Math.min(t.max-t.hp,Math.round(power));if(n<=0)return;t.hp+=n;a.healed=(a.healed||0)+n;effect('heal',a,t,n,.8,{preset:'restoration'});};
  function damage(a,t,power,skill={}){
   if(!alive(t))return;
   const enemy=a.kind!==undefined,magic=skill.kind==='magic';
   const chance=clamp(.91+((a.dex||8)-(t.agi||8))*.003,.75,.99);a.hitMeter=(a.hitMeter??.5)+chance;if(a.hitMeter<1){effect('miss',a,t,0,.5);return;}a.hitMeter-=1;let amount=power*elementFactor(a.element,t.element),critical=false;
   if(!enemy){const count=b.units.filter(h=>!h.owner&&h.element===a.element).length;amount*=count>=3?1.2:count>=2?1.1:1;a.critMeter=(a.critMeter||0)+Math.min(.4,.03+(a.luk||5)*.003+b.talent.crit);if(a.critMeter>=1){amount*=1.5+b.talent.critDamage;a.critMeter-=1;critical=true;}}
   amount=Math.max(1,Math.round(amount-(magic?(t.mdef??t.def):t.def)*(1-(skill.pierce||(!enemy?b.talent.pierce:0)))));
-  if(enemy){amount=Math.max(1,Math.round(amount*(1-b.bonus.reduction)));const knight=live().find(h=>h.job===1&&h!==t&&h.skillCd<=0&&dist(h,t)<16);if(knight){const guard=Math.min(knight.hp,Math.floor(amount*.35));knight.hp-=guard;knight.taken+=guard;amount-=guard;knight.skillCd=4;knight.uses++;if(!alive(knight))knight.downs++;effect('guard',knight,t,guard);}}
-  const absorbed=Math.min(t.shield||0,amount);t.shield=Math.max(0,(t.shield||0)-absorbed);amount-=absorbed;
+  if(enemy){amount=Math.max(1,Math.round(amount*(1-b.bonus.reduction)));const knight=live().find(h=>h.job===1&&h!==t&&h.skillCd<=0&&dist(h,t)<16);if(knight){const guard=Math.min(knight.hp,Math.floor(amount*.35));knight.hp-=guard;knight.taken+=guard;amount-=guard;knight.skillCd=4;knight.uses++;if(!alive(knight))knight.downs++;effect('guard',knight,t,guard,.65,{preset:'aegis'});}}
+  const absorbed=Math.min(t.shield||0,amount);t.shield=Math.max(0,(t.shield||0)-absorbed);amount-=absorbed;if(absorbed>0)effect('shield-hit',a,t,0,.45,{preset:'aegis'});
   const actual=Math.min(t.hp,amount);t.hp-=actual;t.taken=(t.taken||0)+actual;a.dealt=(a.dealt||0)+actual;t.hurtUntil=b.time+.15;
-  effect('damage',a,t,actual,.55,{critical});effect(skill.kind==='magic'?'burst':'slash',a,t,0,.22);
+  effect('damage',a,t,actual,.55,{critical});effect('impact',a,t,0,.5,{preset:presetFor(a,skill),critical});
   if(a.owner){const owner=b.units.find(u=>u.id===a.owner);if(owner)owner.dealt+=actual;}
   if(alive(t)){if(skill.stun)t.stun=Math.max(t.stun||0,skill.stun);if(skill.slow){t.slow=skill.slow;t.slowUntil=b.time+3;}}
   if(alive(a)&&!enemy){heal(a,a,actual*((a.passive?.leech||0)+(skill.leech||0)));}
@@ -89,18 +90,19 @@ export function tick(s,dt=.05){
  }
  function impact(a,target,skill,power,center){
   const friendly=['heal','shield','revive','taunt','summon'].includes(skill.kind);
-  if(skill.kind==='revive'){if(target&&target.hp===0){target.hp=Math.round(target.max*skill.power);target.stun=0;target.action=null;effect('revive',a,target,target.hp,.8);}return;}
+  if(skill.kind==='revive'){if(target&&target.hp===0){target.hp=Math.round(target.max*skill.power);target.stun=0;target.action=null;effect('revive',a,target,target.hp,.9,{preset:'restoration'});}return;}
   if(skill.kind==='summon'){if(b.units.some(u=>u.owner===a.id&&alive(u)))return;const max=Math.round(a.max*.5);b.units=b.units.filter(u=>u.owner!==a.id);b.units.push({...a,id:1000+a.id,owner:a.id,name:'ผู้พิทักษ์ของ '+a.name,job:0,max,hp:max,atk:a.atk*.4,passive:{},skillIds:[],skillTimers:{},range:5,x:a.x+4,y:a.y-3,action:null,cast:null,cd:.6,dealt:0,taken:0,healed:0,uses:0,downs:0,shield:0});effect('summon',a,a,0,.7);return;}
-  if(skill.kind==='taunt'){a.shield=Math.max(a.shield,Math.round(a.max*skill.power));b.enemies.filter(e=>alive(e)&&dist(a,e)<24).forEach(e=>{e.taunt=3;e.targetId=a.id;});effect('shield',a,a,0,.6);return;}
+  if(skill.kind==='taunt'){a.shield=Math.max(a.shield,Math.round(a.max*skill.power));b.enemies.filter(e=>alive(e)&&dist(a,e)<24).forEach(e=>{e.taunt=3;e.targetId=a.id;});effect('shield',a,a,0,.8,{preset:'aegis'});return;}
   const pool=friendly?live():(a.kind!==undefined?live():b.enemies.filter(alive));
   let targets=skill.radius?pool.filter(t=>dist(t,center)<=skill.radius):target&&alive(target)?[target]:[];
   if(skill.targets)targets=pool.sort((x,y)=>dist(x,center)-dist(y,center)).slice(0,skill.targets);
-  if(skill.radius)effect(friendly?'aura-heal':'burst',a,center,0,.45,{radius:skill.radius});
-  for(const t of targets){if(skill.kind==='heal'){heal(a,t,power*(1+b.bonus.heal+b.talent.heal+(a.passive?.heal||0)));if(skill.cleanse){t.stun=0;t.slow=0;t.slowUntil=0;}}else if(skill.kind==='shield'){t.shield=Math.max(t.shield,Math.min(t.max*.4,Math.round(power)));effect('shield',a,t,0,.7);}else damage(a,t,power*(skill.execute&&t.hp/t.max<.3?1.5:1),skill);}
+  if(skill.radius)effect(friendly?'aura-heal':'burst',a,center,0,.45,{radius:skill.radius,preset:friendly?'restoration':presetFor(a,skill)});
+  for(const t of targets){if(skill.kind==='heal'){heal(a,t,power*(1+b.bonus.heal+b.talent.heal+(a.passive?.heal||0)));if(skill.cleanse){t.stun=0;t.slow=0;t.slowUntil=0;}}else if(skill.kind==='shield'){t.shield=Math.max(t.shield,Math.min(t.max*.4,Math.round(power)));effect('shield',a,t,0,.8,{preset:'aegis'});}else damage(a,t,power*(skill.execute&&t.hp/t.max<.3?1.5:1),skill);}
  }
  function prepare(a,target,skill){
   const power=a.atk*skill.power,duration=skill.kind==='magic'?.7:skill.kind==='heal'||skill.kind==='revive'?.45:.22;
   a.action={target,skill,power,remaining:duration,center:{x:target.x,y:target.y}};a.actionName=skill.name||'';a.cast=skill.kind==='magic'?a.action.center:null;a.actionUntil=b.time+duration;
+  effect('charge',a,target,0,duration,{preset:presetFor(a,skill)});
   if(skill.radius&&a.cast)effect('cast',a,target,0,duration,{radius:skill.radius});
   if(skill.id){a.skillTimers[skill.id]=skill.cooldown;a.uses++;log(`${a.name} · ${skill.name}`);}a.cd=Math.max(a.interval,duration+.15);
  }
@@ -113,13 +115,13 @@ export function tick(s,dt=.05){
   if(!alive(a))continue;
   if(a.kind===undefined&&!a.owner){a.potionCd-=dt;a.guardCd-=dt;a.regenCd-=dt;
    if(a.regenCd<=0){a.regenCd+=3;heal(a,a,a.max*(a.passive.regen||0));}
-   if(a.passive.guard&&a.hp/a.max<.35&&a.guardCd<=0){a.shield=Math.max(a.shield,Math.round(a.max*a.passive.guard));a.guardCd=15;effect('shield',a,a);}
+   if(a.passive.guard&&a.hp/a.max<.35&&a.guardCd<=0){a.shield=Math.max(a.shield,Math.round(a.max*a.passive.guard));a.guardCd=15;effect('shield',a,a,0,.8,{preset:'aegis'});}
    if(s.settings.hp>0&&a.hp/a.max*100<=s.settings.hp&&s.potions>0&&a.potionCd<=0){heal(a,a,a.max*.4*(1+b.talent.heal));s.potions--;a.potionCd=10;}
   }
   if(a.stun>0){a.action=null;a.cast=null;continue;}
   if(a.action){const act=a.action;act.remaining-=dt;if(act.remaining>1e-8)continue;a.action=null;a.cast=null;
    const ranged=['shot','magic'].includes(act.skill.kind);
-   if(ranged){const travel=clamp(dist(a,act.target)/80,.12,.65),event=effect('projectile',a,act.skill.radius?act.center:act.target,0,travel,{projectile:act.skill.kind,sourceId:a.id,targetId:act.target.id});b.shots.push({source:a,target:act.target,center:act.center,skill:act.skill,power:act.power,remaining:travel,event});}
+   if(ranged){effect('launch',a,act.skill.radius?act.center:act.target,0,.2,{preset:presetFor(a,act.skill)});const travel=clamp(dist(a,act.target)/80,.12,.65),event=effect('projectile',a,act.skill.radius?act.center:act.target,0,travel,{projectile:act.skill.kind,preset:presetFor(a,act.skill),sourceId:a.id,targetId:act.skill.radius?null:act.target.id});b.shots.push({source:a,target:act.target,center:act.center,skill:act.skill,power:act.power,remaining:travel,event});}
    else if(act.skill.kind!=='strike'||dist(a,act.target)<=a.range+4)impact(a,act.target,act.skill,act.power,act.center);
    a.actionUntil=b.time+.16;continue;
   }
@@ -155,7 +157,7 @@ export function tick(s,dt=.05){
   }
  }
  separate(all(),dt);
- if(b.talent.revive&&!b.revived){const h=b.units.find(h=>!h.owner&&!alive(h));if(h){h.hp=Math.round(h.max*.3);b.revived=true;effect('revive',h,h,h.hp);}}
+ if(b.talent.revive&&!b.revived){const h=b.units.find(h=>!h.owner&&!alive(h));if(h){h.hp=Math.round(h.max*.3);b.revived=true;effect('revive',h,h,h.hp,.9,{preset:'restoration'});}}
  let outcome;
  if(!live().some(h=>!h.owner)||b.time>=BALANCE.timeout)outcome='loss';
  else if(b.enemies.every(e=>!alive(e))&&b.shots.length===0){

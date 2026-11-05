@@ -23,7 +23,7 @@ This is a local single-player simulation, not the original game and not a server
 
 ## Saves
 
-`mistbound-v5` is retained. Old heroes acquire stable skill metadata when inspected/used; no automatic reset or currency grant. Optional DEX/LUK values are derived for legacy heroes. Export a save from the header; import JSON from the footer. The legacy `?reset=normal-v8` one-time reset link remains explicitly opt-in and backs up the previous save. Ordinary `?v=clip-v10` links do not reset anything.
+`mistbound-v5` is retained. Old heroes acquire stable skill metadata when inspected/used; no automatic reset or currency grant. Optional DEX/LUK values are derived for legacy heroes. Export a save from the header; import JSON from the footer. The legacy `?reset=normal-v8` one-time reset link remains explicitly opt-in and backs up the previous save. Ordinary `?v=fx-v11` links do not reset anything.
 
 ## Verification
 
@@ -35,3 +35,12 @@ This is a local single-player simulation, not the original game and not a server
 - Playwright regression checks: `tests/normal-reset-ui.test.cjs`, `tests/summon-preset-ui.test.cjs`, `tests/chapter-ui.test.cjs` (requires Playwright and `/usr/bin/chromium`).
 
 [Earlier development history](docs/history-before-clip-v10.md) is archived and contains superseded rules/test counts.
+
+## VFX presets (fx-v11)
+
+Six shared runtime presets: Crescent Slash, Piercing Arrow, Armor Breaker, Arcane Comet, Restoration and Aegis. Directional trails, contact sparks, healing leaves and shield ripples use the battle clock, including pause and 1×/2×/4×. Support effects follow their recipient; projectiles end at their impact position. Reduced-motion mode hides bloom and particles. These are authored SVG/CSS effects inspired by the concept board, not extracted commercial assets. Damage, cooldowns and rewards are unchanged.
+
+Open `vfx-preview.html` (also linked from the in-game library) to preview all six without reading or changing saves.
+
+- `node tests/vfx.test.mjs` — six mapping, geometry, timing and combat integration cases.
+- `node tests/vfx-ui.test.cjs` — requires a local server on port 8000, Playwright and Chromium; checks preview controls/mobile layout, combat pause/speed, reduced motion and runtime errors.
