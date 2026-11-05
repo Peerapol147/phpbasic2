@@ -55,3 +55,13 @@ Heroes → ย่อยตัวละคร supports batch selection, protected
 ### Inline selection (inline-v14)
 
 Selection now lives inside the hero filter panel; there are no separate bulk/dismantling tabs. Check individual cards or select all matching the current filters, then lock, unlock or review dismantling from the same screen. Hidden selections are counted. Dismantling previews skip protected heroes and snapshot only the eligible IDs for confirmation. Changing filters retains the selection. `node tests/bulk-ui.test.cjs` and `node tests/roster-ui.test.cjs` cover the inline workflow and mobile layout.
+
+## Character motion and rank garments (motion-v15)
+
+Built on `5c584c9` (the inline bulk roster update), preserving the new skill system, waves, economy, rarity table and roster protections. The engine now exposes presentation-only preparation timestamps; the shared renderer uses those timestamps for sword windup/recovery, bow draw/release, firearm recoil and support/casting poses. Stun cancels the pose, and wave changes clear it. Pausing or changing speed also retains the current pose when the battle DOM is rebuilt. Active sword skills receive a second crescent trail, while critical contact sparks are emphasized through the existing VFX pipeline.
+
+The painted class/rarity atlas remains the base. Authored rank-specific cape silhouettes, shoulder pieces, seams and insignia add garment differences to all eight classes at all seven stars, retaining each class's material palette and existing faces/weapons. The same portrait renderer is used by the roster, summons, HUD, profiles, city and battle. This is layered atlas animation: shoulders and weapon pivot together at the waist, with a small overlapping forearm/string rig for the bow; it is not a newly painted frame-by-frame animation set.
+
+Library → **ชุดประจำอาชีพ · 1–7 ดาว** shows all 56 outfits. **ดูท่าต่อสู้และชุดแต่ละดาว** opens `motion-preview.html`, with rank, pause, speed and timeline controls. The preview shares the actual costume/pose/VFX modules and never reads or writes saves. Reduced motion suppresses pose displacement. No reset, currency grant or summon-rate change is performed by this update.
+
+Validation: 84 unit cases across engine (18), skills (53), roster (3), VFX (6) and character motion (4). Browser suites `character-motion-ui`, `vfx-ui`, `roster-ui`, `bulk-ui`, `normal-reset-ui` and `summon-preset-ui` cover the rendered outfits, bow string release, pause/4×, mobile layout, reduced motion, saved roster operations and paid summons. Run with a local server on :8000 and Chromium/Playwright. The renderer reads arena dimensions once per update and observes/unobserves every visible sprite fragment; it continues to share one atlas download.
