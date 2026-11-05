@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="900" viewBox="0 0 900 900" preserveAspectRatio="none">
+<defs>
+ <radialGradient id="floor"><stop stop-color="#57132e"/><stop offset=".62" stop-color="#2b0b20"/><stop offset="1" stop-color="#080a12"/></radialGradient>
+ <pattern id="tiles" width="112" height="96" patternUnits="userSpaceOnUse"><path d="M3 4h106v87H3Z" fill="#4f18302b" stroke="#170b19" stroke-width="8"/><path d="M8 8h96M8 8v74" fill="none" stroke="#7e284533" stroke-width="3"/><path d="m18 37 21-13 12 17m20 33 12-8 18 10" fill="none" stroke="#1d0b1c" stroke-width="2"/></pattern>
+ <linearGradient id="pillar"><stop stop-color="#100a16"/><stop offset=".45" stop-color="#46142f"/><stop offset=".65" stop-color="#641738"/><stop offset="1" stop-color="#160a19"/></linearGradient>
+ <radialGradient id="light"><stop stop-color="#ff312f" stop-opacity=".35"/><stop offset="1" stop-color="#ff1228" stop-opacity="0"/></radialGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="8"/></filter>
+ <g id="sigil" fill="none" stroke="#ff183b" stroke-width="6"><circle r="150"/><circle r="132" stroke-width="2"/><circle r="47" stroke-width="5"/><path d="m0-139 34 58-34 27-34-27Zm-120 211 68-1 8-43-40-15Zm240 0-68-1-8-43 40-15Z" fill="#ff183b"/><path d="M0-48v-42M-42 24l-37 21m121-21 37 21"/><path d="M-104-63Q-75-123-13-124M106-60q29 62-3 116M0 123q-67 0-103-58" stroke-width="12"/><path d="m-14-158 14-24 14 24m131 69 27 1-11 24m-156 89-13 24-14-24" fill="#ff183b"/></g>
+</defs>
+<rect width="900" height="900" fill="#080a12"/><path d="M140 70h620l100 180v650H40V250Z" fill="url(#floor)"/>
+<path d="M140 70h620l100 180v650H40V250Z" fill="url(#tiles)"/>
+<path d="M95 0v900M805 0v900" stroke="#080710" stroke-width="64"/><path d="M120 0v900M780 0v900" stroke="url(#pillar)" stroke-width="38"/>
+<path d="M290 0v158H210v40h480v-40h-80V0" fill="#160b1c" stroke="#41132c" stroke-width="10"/>
+<g transform="translate(450 470)"><use href="#sigil" opacity=".7" filter="url(#glow)"/><use href="#sigil"/></g>
+<g fill="url(#light)"><ellipse cx="200" cy="215" rx="120" ry="110"/><ellipse cx="700" cy="215" rx="120" ry="110"/><ellipse cx="200" cy="805" rx="120" ry="110"/><ellipse cx="700" cy="805" rx="120" ry="110"/></g>
+<path d="M140 895h620" stroke="#a22840" stroke-width="3"/>
+</svg>

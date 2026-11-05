@@ -3,11 +3,11 @@ const assert=require('node:assert/strict');const {chromium}=require('playwright'
  await p.locator('#gm-toggle').click();await p.locator('[data-action="gm-enter"]').click();await p.locator('[data-page="gacha"]').click();await p.locator('[data-action="toggle-gacha-test"]').click();
  await p.waitForFunction(()=>document.querySelector('.sanctum-gem use')?.getBBox().width>0);
  assert.equal((await p.request.get('http://127.0.0.1:8000/assets/summon-kit.svg')).status(),200);
- assert.deepEqual(await p.locator('.gacha-layout tbody tr td:nth-child(2)').allTextContents(),['0.01%','0.02%','0.07%','0.1%','3%','15%','81.8%']);
+ assert.deepEqual(await p.locator('.gacha-layout tbody tr td:nth-child(2)').allTextContents(),['0.000005%','0.0001%','0.001%','0.01%','3%','15%','81.988895%']);
  assert.doesNotMatch(await p.locator('body').innerText(),/\bAI\b|ต้นแบบ|เรททดลอง|pity/);
  assert.ok(await p.locator('#wallet .gem-icon use').evaluate(n=>n.getBBox().width)>0);
  await p.screenshot({path:'/tmp/mistbound-preset-sanctum.png'});
- await p.evaluate(()=>{Math.random=()=>.999999;});await p.locator('[data-action="summon:100"]').click();await p.locator('.omen.rarity-7').waitFor();await p.waitForFunction(()=>document.querySelector('.omen-crystal use')?.getBBox().width>0);
+ await p.evaluate(()=>{Math.random=()=>.99999999999;});await p.locator('[data-action="summon:100"]').click();await p.locator('.omen.rarity-7').waitFor();await p.waitForFunction(()=>document.querySelector('.omen-crystal use')?.getBBox().width>0);
  assert.equal(await p.locator('.omen-rays use[href$="#prism-ring"]').count(),1);assert.equal(await p.locator('.omen-rays').evaluate(n=>getComputedStyle(n).backgroundImage),'none');
  await p.waitForTimeout(700);await p.screenshot({path:'/tmp/mistbound-preset-opening.png'});await p.locator('[data-action="summon-all"]').click();await p.locator('#close-results').click();
  await p.setViewportSize({width:390,height:844});assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);await p.screenshot({path:'/tmp/mistbound-preset-mobile.png'});assert.deepEqual(errors,[]);

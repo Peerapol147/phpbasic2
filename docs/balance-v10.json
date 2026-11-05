@@ -1,0 +1,127 @@
+{
+  "conditions": "56 unique five-class combinations, default order/elements, one star, level 1, no potions, no talents; deterministic outcomes, NOT player win probabilities",
+  "rows": [
+    {
+      "floor": 1,
+      "teams": 56,
+      "wins": 56,
+      "meanSeconds": 12.8
+    },
+    {
+      "floor": 5,
+      "teams": 56,
+      "wins": 56,
+      "meanSeconds": 20.1
+    },
+    {
+      "floor": 10,
+      "teams": 56,
+      "wins": 56,
+      "meanSeconds": 35.6
+    },
+    {
+      "floor": 15,
+      "teams": 56,
+      "wins": 53,
+      "meanSeconds": 36.8
+    },
+    {
+      "floor": 20,
+      "teams": 56,
+      "wins": 0,
+      "meanSeconds": 51.2
+    },
+    {
+      "floor": 25,
+      "teams": 56,
+      "wins": 0,
+      "meanSeconds": 34.7
+    },
+    {
+      "floor": 30,
+      "teams": 56,
+      "wins": 0,
+      "meanSeconds": 19.1
+    }
+  ],
+  "progression": [
+    {
+      "trainingPerHero": 0,
+      "goldCost": 0,
+      "results": [
+        {
+          "floor": 10,
+          "outcome": "win"
+        },
+        {
+          "floor": 15,
+          "outcome": "loss"
+        },
+        {
+          "floor": 20,
+          "outcome": "loss"
+        },
+        {
+          "floor": 25,
+          "outcome": "loss"
+        },
+        {
+          "floor": 30,
+          "outcome": "loss"
+        }
+      ]
+    },
+    {
+      "trainingPerHero": 5,
+      "goldCost": 5000,
+      "results": [
+        {
+          "floor": 10,
+          "outcome": "win"
+        },
+        {
+          "floor": 15,
+          "outcome": "win"
+        },
+        {
+          "floor": 20,
+          "outcome": "loss"
+        },
+        {
+          "floor": 25,
+          "outcome": "loss"
+        },
+        {
+          "floor": 30,
+          "outcome": "loss"
+        }
+      ]
+    },
+    {
+      "trainingPerHero": 10,
+      "goldCost": 10000,
+      "results": [
+        {
+          "floor": 10,
+          "outcome": "win"
+        },
+        {
+          "floor": 15,
+          "outcome": "win"
+        },
+        {
+          "floor": 20,
+          "outcome": "win"
+        },
+        {
+          "floor": 25,
+          "outcome": "loss"
+        },
+        {
+          "floor": 30,
+          "outcome": "loss"
+        }
+      ]
+    }
+  ]
+}

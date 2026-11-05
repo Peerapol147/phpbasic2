@@ -1,5 +1,5 @@
-import {create,start,tick,train} from '../engine.mjs';
+import {create,start,tick,train,BALANCE} from '../engine.mjs';
 const teams=[];for(let a=1;a<=4;a++)for(let b=a+1;b<=5;b++)for(let c=b+1;c<=6;c++)for(let d=c+1;d<=7;d++)for(let e=d+1;e<=8;e++)teams.push([a,b,c,d,e]);
-function sim(team,floor,training=0){const s=create();s.team=team;s.floor=floor;s.cleared=floor-1;s.potions=0;s.gold=100000;for(const id of team)for(let i=0;i<training;i++)train(s,id);start(s,false,floor);let ticks=0;while(s.battle&&ticks++<1000)tick(s);if(!s.report)throw Error('unfinished');return s.report;}
+function sim(team,floor,training=0){const s=create();s.team=team;s.floor=floor;s.cleared=floor-1;s.potions=0;s.gold=100000;for(const id of team)for(let i=0;i<training;i++)train(s,id);start(s,false,floor);let ticks=0;while(s.battle&&ticks++<BALANCE.timeout/.05+100)tick(s);if(!s.report)throw Error('unfinished');return s.report;}
 const rows=[1,5,10,15,20,25,30].map(f=>{const runs=teams.map(t=>sim(t,f));return {floor:f,teams:runs.length,wins:runs.filter(r=>r.outcome==='win').length,meanSeconds:Math.round(runs.reduce((n,r)=>n+r.time,0)/runs.length*10)/10};});
 console.log(JSON.stringify({conditions:'56 unique five-class combinations, default order/elements, one star, level 1, no potions, no talents; deterministic outcomes, NOT player win probabilities',rows,progression:[0,5,10].map(n=>({trainingPerHero:n,goldCost:n*5*200,results:[10,15,20,25,30].map(f=>({floor:f,outcome:sim([2,3,4,6,8],f,n).outcome}))}))},null,2));
