@@ -51,3 +51,7 @@ Heroes → ย่อยตัวละคร supports batch selection, protected
 
 - `node tests/roster.test.mjs` — atomic dismantling, protections, rewards and legacy save compatibility.
 - `node tests/roster-ui.test.cjs` — preview/cancel/confirm, reload, locks, roster actions and mobile layouts (same browser/server requirements as VFX tests).
+
+### Bulk selection (bulk-v13)
+
+Heroes → เลือกหลายตัว provides select-all matching the current filters, deselect-visible, clear-all, and batch lock/unlock. Hidden selections are counted explicitly. Sending a selection to dismantling skips protected heroes and still requires the review/confirmation step. The dismantling tab also supports select-all eligible heroes. Switching tabs clears selection; changing filters retains it. `node tests/bulk-ui.test.cjs` verifies these workflows and mobile overflow.
