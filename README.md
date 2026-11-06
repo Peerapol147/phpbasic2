@@ -81,3 +81,11 @@ Checks: 87 unit/regression cases; browser coverage for selection entry/exclusion
 This is the first visual review asset, for the starter swordsman and one side-view direction. Mirroring is a preview convenience, not an independently drawn left-facing set. It is not yet substituted for battle sprites: idle, attacks, hurt, death and other classes/ranks still need their own consistent frames. Preview controls do not read or write game saves.
 
 `node tests/walk-preview-ui.test.cjs` checks eight distinct rendered frames, loop and step wrapping, pause, controls, mobile layout, reduced-motion start and save isolation (local :8000 server, Playwright and Chromium required).
+
+## Swordsman combat frame study (combat-v18)
+
+The same `walk-preview.html` now has a movement selector for walking, normal attack and all five current swordsman skills. Four new transparent sheets contain eight full-body drawings each: diagonal slash, horizontal sweep, thrust and overhead finisher. `combat-frames.mjs` maps them to source rectangles, ground anchors, per-step durations and contact cues. Continuous cut reuses the slash sheet in a 12-step, two-contact visual combo; life drain uses slash plus a return trail. These two are explicitly shared physical poses, not separate generated sheets.
+
+The player supports single stepping, pause, speed, flip, onion skin, effect toggle, small battle-size preview and downloading the selected source sheet. A stationary target shows the blade contact; sparks and drain trails start at the contact cue. Existing mechanics are read from `abilities.mjs` for context. This is a visual study only: neither the displayed cycle durations nor the two-contact combo change actual cooldowns, damage or hit count. The battle renderer still uses its current sprites until these motions are reviewed and integrated.
+
+Tests: `node tests/combat-frames.test.mjs`, `node tests/combat-frames-ui.test.cjs`, and the existing walking-preview browser test.
