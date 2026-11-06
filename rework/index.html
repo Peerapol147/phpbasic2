@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="th">
+  <meta charset="utf-8" /><meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  /><title>Mistbound • City Defense Prototype</title
+  ><link rel="stylesheet" href="style.css" />
+  <body>
+    <header>
+      <div>
+        <small>MISTBOUND / REWORK 01</small>
+        <h1>เมืองสุดท้ายในม่านหมอก</h1>
+      </div>
+      <div id="resources"></div>
+      <a href="../">เกมเดิม ↗</a>
+    </header>
+    <div class="notice">
+      ต้นแบบทดสอบกติกา • อ้างอิง Final Prototype v1 • ภาพหน่วยชั่วคราว •
+      เซฟแยกจากเกมเดิม • ฮีโร่ตายถาวรในเซฟทดลองนี้
+    </div>
+    <main>
+      <section class="field">
+        <nav id="zones"></nav>
+        <div class="viewport">
+          <canvas id="world"></canvas>
+          <div id="banner"></div>
+          <canvas
+            id="minimap"
+            width="128"
+            height="160"
+            aria-label="แผนที่ย่อ คลิกเพื่อเลื่อนกล้อง"
+          ></canvas>
+        </div>
+        <div class="toolbar">
+          <button id="pause">หยุด / เล่น (Space)</button
+          ><select id="speed" aria-label="ความเร็ว">
+            <option value="1">1×</option>
+            <option value="2">2×</option>
+            <option value="4">4×</option></select
+          ><button id="hold">ตั้งรับ</button
+          ><button id="retreat">ถอนเข้าถนนชั้นใน</button
+          ><button id="skill">ใช้สกิล</button
+          ><button id="all">เลือกทั้งกอง</button>
+        </div>
+        <p class="hint">
+          คลิกหน่วยเพื่อเลือก • Shift เพิ่มหน่วย • คลิกพื้นที่ว่างเพื่อเดิน •
+          คลิกขวาศัตรูเพื่อโจมตี • ล้อเมาส์ซูม • หยุดแล้วสั่งการได้
+        </p>
+        <div id="message" role="status"></div>
+      </section>
+      <aside>
+        <div id="status"></div>
+        <h2>กองป้องกันเมือง</h2>
+        <div id="roster"></div>
+        <div id="details"></div>
+        <div id="controls"></div>
+        <details>
+          <summary>บันทึกเหตุการณ์ / การสูญเสีย</summary>
+          <div id="log"></div>
+        </details>
+        <details>
+          <summary>เครื่องมือทดสอบและเซฟ</summary>
+          <p>โหมดทดสอบใช้เซฟทดลองเดียวกัน การสั่งให้ฮีโร่ตายยังมีผลถาวร</p>
+          <label
+            ><input type="checkbox" id="dev" />
+            เปิดสถานการณ์ทดสอบก่อนเริ่มเรด</label
+          >
+          <div id="devActions"></div>
+          <button id="export">ดาวน์โหลดเซฟ</button
+          ><button id="reset">เริ่มเซฟทดลองใหม่…</button>
+        </details>
+      </aside>
+    </main>
+    <script type="module" src="app.mjs"></script>
+  </body>
+</html>
