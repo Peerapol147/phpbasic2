@@ -19,7 +19,7 @@ as completed just because these skills have been installed.
 Suggested task routing:
 - City interface: `game-ui-ux`, `create-game-assets`.
 - Raid mechanics and balance: `tower-defense`.
-- Movement and impact presentation: `game-ai`, `game-feel` (verify available names).
+- Movement and impact presentation: `ai-behavior-trees-utility-ai`, `game-feel`.
 - Persistence changes: `save-systems`.
 
 Read `rework/DECISIONS.md` for implemented scope and known limitations. Never replace
