@@ -13,8 +13,8 @@ from presentation. Preserve fixed-step simulation and save isolation during UI w
 
 Current authorized product direction: replace the old game entry with the new city
 interface, reuse existing character/animation/effect presets, and follow the user's
-city and battle reference images. This migration is still pending; do not report it
-as completed just because these skills have been installed.
+city and battle reference images. The root entry now routes to the city interface. Character portraits and sword impact
+presets are reused; the battlefield visual rework and full animation migration remain pending.
 
 Suggested task routing:
 - City interface: `game-ui-ux`, `create-game-assets`.

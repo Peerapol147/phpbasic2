@@ -1,3 +1,5 @@
+import {CLIPS,sampleClip,drawCombatFX} from "../combat-frames.mjs";
+import {portraitMarkup} from "../character-art.mjs";
 import { CONFIG, CLASSES, TROOPS, RAIDS, ZONES, BUILDINGS } from "./config.mjs";
 import {
   createCampaign,
@@ -18,6 +20,7 @@ import { SAVE_KEY, decode, save } from "./storage.mjs";
 const $ = (id) => document.getElementById(id),
   canvas = $("world"),
   ctx = canvas.getContext("2d");
+const atlas=new Image();atlas.src="../assets/hero-atlas.png";
 let s,
   blocked = false;
 try {
@@ -97,6 +100,7 @@ function label(x, y, t, color = "#c7c6ae", size = 12) {
   ctx.fillText(t, p.x, p.y);
 }
 function draw() {
+  if(city())return;
   const w = canvas.clientWidth,
     h = canvas.clientHeight,
     dpr = devicePixelRatio || 1;
@@ -184,6 +188,7 @@ function draw() {
         u.side === "enemy" ? "#ffe3d6" : "#152624",
         u.heroId ? 20 : 13,
       );
+      if(u.heroId&&atlas.complete&&atlas.naturalWidth){const pos=project(u.x,u.y),j=({guardian:1,swordsman:0,spearman:2,archer:3,mage:5})[u.classId],sw=atlas.naturalWidth/7,sh=atlas.naturalHeight/8;ctx.drawImage(atlas,sw,j*sh,sw,sh,pos.x-zoom*.75,pos.y-zoom*1.8,zoom*1.5,zoom*2);if(u.classId==='swordsman'&&u.attackAt!==undefined&&b.time-u.attackAt<.22){const clip=CLIPS.find(c=>c.id==='normal');drawCombatFX(ctx,clip,{impactAge:b.time-u.attackAt,source:4},pos.x,pos.y,zoom/220,false,true,false);}}
       const p = project(u.x, u.y - 0.8);
       ctx.fillStyle = "#161e20";
       ctx.fillRect(p.x - 11, p.y, 22, 3);
@@ -255,6 +260,7 @@ function draw() {
   );
 }
 function ui() {
+  document.body.classList.toggle("in-city",city());
   let controlHTML = "";
   const b = s.raid;
   $("resources").textContent =
@@ -278,7 +284,7 @@ function ui() {
       .map((h) => {
         const u = active() ? b.units.find((u) => u.id === h.id) : null,
           d = heroStats(h, s.items);
-        return `<button class="card ${selected.has(h.id) ? "selected" : ""} ${h.alive ? "" : "dead"}" data-pick="${h.id}"><span class="badge">${CLASSES[h.classId].icon}</span><span>${h.name} · ${CLASSES[h.classId].name}<br><small>${h.alive ? `★★ Lv.${h.level} · HP ${Math.ceil(h.hp)}/${d.max} · MP ${Math.floor(h.mana)}` : "เสียชีวิตถาวร"}${u?.skillCd > 0 ? " · CD " + Math.ceil(u.skillCd) : ""}</small><progress value="${h.hp}" max="${d.max}"></progress></span></button>`;
+        return `<button class="card ${selected.has(h.id) ? "selected" : ""} ${h.alive ? "" : "dead"}" data-pick="${h.id}"><span class="badge">${portraitMarkup(({guardian:1,swordsman:0,spearman:2,archer:3,mage:5})[h.classId],h.rarity)}</span><span>${h.name} · ${CLASSES[h.classId].name}<br><small>${h.alive ? `★★ Lv.${h.level} · HP ${Math.ceil(h.hp)}/${d.max} · MP ${Math.floor(h.mana)}` : "เสียชีวิตถาวร"}${u?.skillCd > 0 ? " · CD " + Math.ceil(u.skillCd) : ""}</small><progress value="${h.hp}" max="${d.max}"></progress></span></button>`;
       })
       .join("") +
     s.city.squads
@@ -543,3 +549,16 @@ function frame(now) {
 ui();
 persist();
 requestAnimationFrame(frame);
+
+let panel='city';
+function showPanel(id){panel=id;const box=$('buildingPanel');const titles={city:'ศาลาว่าการ',heroes:'ฮีโร่ประจำเมือง',barracks:'ค่ายทหาร',hospital:'โรงพยาบาล',stores:'คลังทรัพยากร',defense:'แนวป้องกัน',reports:'รายงานเรด',smith:'โรงตีเหล็ก',summon:'แท่นอัญเชิญ'};let content='';
+if(id==='city')content='เตรียมทรัพยากร รักษาฮีโร่ และเสริมกำลังก่อนเริ่มเรด เลือกอาคารบนแผนที่เพื่อจัดการเมือง';
+if(id==='hospital')content='<p>เลือกฮีโร่ด้านขวาแล้วกดรักษา • ค่ารักษา 1 ทองต่อ HP ที่ขาด 10 หน่วย • ฟื้น 10 HP และ 5 MP ต่อวินาที</p><button data-do="heal">✚ รักษาฮีโร่ที่เลือก</button>';
+if(id==='barracks')content=s.city.squads.map(q=>`<button data-recruit="${q.id}">${TROOPS[q.type].name} ${q.count}/5 · เกณฑ์ +1 / 20 ทอง</button>`).join('');
+if(id==='defense')content=`<p>ประตู ${Math.ceil(s.city.gateHP)}/1800 · ป้อม ${Math.ceil(s.city.fortHP)}/2500</p><button data-do="gate">ซ่อมประตู</button><button data-do="fort">ซ่อมป้อม</button>`;
+if(id==='stores')content=`<p>ทอง ${Math.floor(s.city.gold)} · ไม้ ${s.city.wood} · หิน ${s.city.stone} · เหล็ก ${s.city.iron}</p>ผลิตขณะอยู่เมืองทุก 60 วินาที: ทอง +30 / ไม้ +10 / หิน +10 / เหล็ก +3`;
+if(id==='heroes')content='เลือกการ์ดฮีโร่ด้านขวาเพื่อดูค่าสเตตัสและสกิล • Shift เพื่อเลือกหลายหน่วย';
+if(id==='reports')content=s.raid?.report?`เรดล่าสุด: ${s.raid.report.outcome==='win'?'ชนะ':'แพ้'} · ฮีโร่ตาย ${s.raid.report.deaths.length} · ทหารสูญเสีย ${s.raid.report.soldiersLost}`:'ยังไม่มีรายงานเรด';
+if(id==='smith'||id==='summon')content='กำลังก่อสร้างระบบ • ยังไม่เปิดใช้งานในรุ่นนี้';
+box.innerHTML=`<h2>${titles[id]}</h2><div>${content}</div>`;document.querySelectorAll('[data-panel]').forEach(b=>b.classList.toggle('chosen',b.dataset.panel===id));}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-panel]');if(b)showPanel(b.dataset.panel);else if(e.target.closest('[data-recruit],[data-do]'))showPanel(panel);});showPanel('city');

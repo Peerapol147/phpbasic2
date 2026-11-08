@@ -4,7 +4,7 @@
     name="viewport"
     content="width=device-width,initial-scale=1"
   /><title>Mistbound • City Defense Prototype</title
-  ><link rel="stylesheet" href="style.css" />
+  ><link rel="stylesheet" href="style.css" /><link rel="stylesheet" href="city.css" />
   <body>
     <header>
       <div>
@@ -12,17 +12,17 @@
         <h1>เมืองสุดท้ายในม่านหมอก</h1>
       </div>
       <div id="resources"></div>
-      <a href="../">เกมเดิม ↗</a>
+      <span class="city-seal">⚑ เมืองชายแดน</span>
     </header>
     <div class="notice">
-      ต้นแบบทดสอบกติกา • อ้างอิง Final Prototype v1 • ภาพหน่วยชั่วคราว •
+      City Defense • ภาพสนามรบยังอยู่ระหว่างพัฒนา •
       เซฟแยกจากเกมเดิม • ฮีโร่ตายถาวรในเซฟทดลองนี้
     </div>
-    <main>
+    <nav class="side-nav"><button data-panel="city">♜ เมือง</button><button data-panel="heroes">♙ ฮีโร่</button><button data-panel="barracks">⚔ กองทหาร</button><button data-panel="summon">✧ อัญเชิญ</button><button data-panel="stores">▧ คลัง</button><button data-panel="reports">▤ รายงาน</button></nav><main>
       <section class="field">
         <nav id="zones"></nav>
         <div class="viewport">
-          <canvas id="world"></canvas>
+          <div id="cityScene"><img src="../assets/city-defense-town.png" alt="เมืองกำแพงหินในป่าสน มีศาลาว่าการกลางเมือง"/><button style="left:22%;top:29%" data-panel="barracks">⚔ ค่ายทหาร</button><button style="left:27%;top:15%" data-panel="stores">▧ คลังไม้</button><button style="left:75%;top:18%" data-panel="stores">▧ คลังทรัพยากร</button><button style="left:50%;top:43%" data-panel="city">♜ ศาลาว่าการ</button><button style="left:20%;top:53%" data-panel="hospital">✚ โรงพยาบาล</button><button style="left:78%;top:38%" data-panel="smith">⚒ โรงตีเหล็ก</button><button style="left:85%;top:58%" data-panel="summon">✧ แท่นอัญเชิญ</button><button style="left:50%;top:12%" data-panel="defense">♜ ประตูเหนือ</button></div><canvas id="world"></canvas>
           <div id="banner"></div>
           <canvas
             id="minimap"
@@ -31,7 +31,7 @@
             aria-label="แผนที่ย่อ คลิกเพื่อเลื่อนกล้อง"
           ></canvas>
         </div>
-        <div class="toolbar">
+        <nav class="building-tabs"><button data-panel="city">♜ อาคารเมือง</button><button data-panel="stores">◉ เศรษฐกิจ</button><button data-panel="barracks">⚔ การทหาร</button><button data-panel="defense">♢ ป้องกัน</button></nav><section id="buildingPanel" aria-live="polite"></section><div class="toolbar">
           <button id="pause">หยุด / เล่น (Space)</button
           ><select id="speed" aria-label="ความเร็ว">
             <option value="1">1×</option>
@@ -50,10 +50,10 @@
       </section>
       <aside>
         <div id="status"></div>
-        <h2>กองป้องกันเมือง</h2>
+        <div id="controls"></div>
+        <h2>⚔ เตรียมรับเรด</h2>
         <div id="roster"></div>
         <div id="details"></div>
-        <div id="controls"></div>
         <details>
           <summary>บันทึกเหตุการณ์ / การสูญเสีย</summary>
           <div id="log"></div>
