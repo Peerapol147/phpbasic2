@@ -1,7 +1,0 @@
-/* All combat poses are driven by simulation time. No independent walk loops. */
-.combat-stage .fighter{transition:none!important}.combat-stage .battle-sprite{translate:calc(var(--reach,0px)*var(--facing,1)) var(--lift,0px);rotate:var(--lean,0deg);transform-origin:50% 90%;animation:none!important}.combat-stage .sprite-upper{clip-path:none;translate:0 0!important}.combat-stage .sprite-leg{display:none!important;animation:none!important}.combat-stage .fighter>.enemy-art{translate:calc(var(--reach,0px)*var(--facing,1)) var(--lift,0px);transform:none;transform-origin:50% 90%}.combat-stage .fighter.fallen .battle-sprite{translate:0 0;rotate:75deg}.combat-stage .fighter.fallen>.enemy-art{translate:0 0;opacity:.4}.combat-stage .fighter.hurt .battle-sprite{filter:brightness(1.25)}
-@media(prefers-reduced-motion:reduce){.combat-stage .battle-sprite,.combat-stage .fighter>.enemy-art{translate:0 0;rotate:0deg}}
-
-.combat-stage .skill-effect{animation-play-state:paused!important}
-/* Preserve shared class poses and bow draw with restrained, continuous anatomy. */
-.combat-stage .battle-sprite{transform:translateX(calc(var(--pose-lean,0)*.35px)) rotate(calc(var(--pose-body,0)*.18deg))}.combat-stage .sprite-upper{transform:none!important}.combat-stage .off-arm{display:none}.combat-stage .fighter.fallen .battle-sprite{transform:none}
